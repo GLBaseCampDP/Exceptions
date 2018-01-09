@@ -4,31 +4,30 @@
 #include "stdafx.h"
 
 // custom error_category example
-#include <iostream>       // std::cout, std::endl
-#include <system_error>   // std::is_error_condition_enum, std::error_category,
+#include <iostream>       
+#include <system_error>   
 #include <iostream>
 #include <string>
 
 #define DIVIDE_BY_ZERO -3
+using namespace std;
 
-int main()
-{
-	std::error_condition my_cond = std::system_category().default_error_condition(DIVIDE_BY_ZERO);
-	std::cout << "Category: " << my_cond.category().name() << '\n'
-		<< "Value: " << my_cond.value() << '\n'
-		<< "Message: " << my_cond.message() << '\n';
+#define OUT(catg, er) my_cond = catg().default_error_condition(er);\
+   std::cout << "Category: " << my_cond.category().name() << '\n'\
+   << "Value: " << my_cond.value() << '\n'\
+   << "Message: " << my_cond.message() << '\n';
 
-	my_cond = std::system_category().default_error_condition(E2BIG);
-	std::cout << "Category: " << my_cond.category().name() << '\n'
-		<< "Value: " << my_cond.value() << '\n'
-		<< "Message: " << my_cond.message() << '\n';
+int main() {
+	error_condition my_cond;
+	my_cond = OUT(system_category, DIVIDE_BY_ZERO);
+	my_cond = OUT(system_category, E2BIG);
+	my_cond = OUT(generic_category, E2BIG);
 
-	my_cond = std::generic_category().default_error_condition(E2BIG);
-	std::cout << "Category: " << my_cond.category().name() << '\n'
-		<< "Value: " << my_cond.value() << '\n'
-		<< "Message: " << my_cond.message() << '\n';
-	
+	std::error_condition a(std::errc::file_exists);
+	std::error_condition b(EEXIST, std::generic_category());
 
-	system("pause");
+	if (a == b) std::cout << "Yes message - " << a.message();
+
+		system("pause");
 	return 0;
 }
